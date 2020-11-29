@@ -1212,6 +1212,30 @@ Error HeifContext::decode_image_planar(heif_item_id ID,
         return err;
       }
 
+      int img_width = alpha_image->get_width();
+      int img_height = alpha_image->get_height();
+      bool shouldCrop = false;
+
+      if (alpha_image->get_width() > img_width) {
+        img_width = img->get_width();
+        shouldCrop = true;
+      }
+
+      if (alpha_image->get_height() > img_height) {
+        img_height = img->get_height();
+        shouldCrop = true;
+      }
+
+      if (shouldCrop) {
+        std::shared_ptr<HeifPixelImage> croppedAlpha;
+        err = img->crop(0, 0, img_width, img_height, croppedAlpha);
+        if (err) {
+            return err;
+        }
+
+        alpha = croppedAlpha;
+      }
+
       // TODO: check that sizes are the same and that we have an Y channel
       // BUT: is there any indication in the standard that the alpha channel should have the same size?
 
