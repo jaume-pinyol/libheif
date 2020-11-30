@@ -3036,10 +3036,11 @@ std::shared_ptr<HeifPixelImage> heif::convert_colorspace(const std::shared_ptr<H
   int height = input->get_height();
 
   // alpha image should have full image resolution
-
   if (input->has_channel(heif_channel_Alpha)) {
-    if (input->get_width(heif_channel_Alpha) != width ||
-        input->get_height(heif_channel_Alpha) != height) {
+    int alphaWidth = input->get_width(heif_channel_Alpha);
+    int alphaHeight = input->get_height(heif_channel_Alpha);
+
+    if (alphaWidth < width || alphaHeight < height) {
       return nullptr;
     }
   }
